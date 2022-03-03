@@ -9,7 +9,7 @@ public class Removal {
 		ConnectionFactory connectionFactory = new ConnectionFactory();
 		Connection connection = connectionFactory.generateConnection();
 		
-		PreparedStatement stm = connection.prepareStatement("DELETE FROM PRODUTO WHERE ID > 2");
+		PreparedStatement stm = connection.prepareStatement("DELETE FROM PRODUCT WHERE ID > 2");
 		stm.execute();
 		
 		Integer rows = stm.getUpdateCount();
