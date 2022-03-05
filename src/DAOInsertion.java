@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dao.ProductDAO;
+import factory.ConnectionFactory;
 import model.Product;
 
 public class DAOInsertion {
@@ -18,7 +19,6 @@ public class DAOInsertion {
 			productDAO.toSave(table);
 			List<Product> productsList = productDAO.toList();
 			productsList.stream().forEach(pl -> System.out.println(pl));
-			
 		}
 	}
 }

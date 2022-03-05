@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Category;
 import model.Product;
 
 public class ProductDAO {
@@ -36,27 +37,39 @@ public class ProductDAO {
 		}
 	}
 
-	public List<Product> toList() throws SQLException{
+	public List<Product> toList() throws SQLException {
 		List<Product> products = new ArrayList<Product>();
-		
-		try {
-			PreparedStatement stm = connection.prepareStatement("SELECT ID, NAME, DESCRIPTION FROM PRODUCT", Statement.RETURN_GENERATED_KEYS);
-			connection.setAutoCommit(false);
-			
+
+		try (PreparedStatement stm = connection.prepareStatement("SELECT ID, NAME, DESCRIPTION FROM PRODUCT")) {
+
 			stm.execute();
-			
+
+			try (ResultSet rst = stm.getResultSet()) {
+				while (rst.next()) {
+					Product product = new Product(rst.getInt(1), rst.getString(2), rst.getString(3));
+					products.add(product);
+				}
+
+				return products;
+			}
+		}
+	}
+
+	public List<Product> search(Category cl) throws SQLException {
+		List<Product> products = new ArrayList<Product>();
+
+		try (PreparedStatement stm = connection.prepareStatement("SELECT ID, NAME, DESCRIPTION FROM PRODUCT WHERE CATEGORY_ID = ?")) {
+			stm.setInt(1, cl.getId());
+			stm.execute();
+
 			try (ResultSet rst = stm.getResultSet();) {
 				while (rst.next()) {
 					Product product = new Product(rst.getInt(1), rst.getString(2), rst.getString(3));
 					products.add(product);
 				}
-				connection.commit();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Rollback performed");
-			connection.rollback();
+
+			return products;
 		}
-		return products;
 	}
 }
