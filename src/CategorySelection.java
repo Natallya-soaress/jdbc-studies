@@ -3,7 +3,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dao.CategoryDAO;
-import dao.ProductDAO;
 import factory.ConnectionFactory;
 import model.Category;
 import model.Product;
@@ -14,15 +13,11 @@ public class CategorySelection {
 
 		try (Connection connection = new ConnectionFactory().generateConnection()) {
 			CategoryDAO categoryDAO = new CategoryDAO(connection);
-			List<Category> categoryList = categoryDAO.toList();
+			List<Category> categoryList = categoryDAO.toListComplete();
 			categoryList.stream().forEach(cl -> {
 				System.out.println(cl.getName());
-				try {
-					for (Product product : new ProductDAO(connection).search(cl)) {
-						System.out.println(cl.getName() + " - " + product.getName());
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+				for (Product product : cl.getProducts()) {
+					System.out.println(cl.getName() + " - " + product.getName());
 				}
 			});
 		}
